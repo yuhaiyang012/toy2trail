@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231e4deb'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='sans-serif' font-size='34' font-weight='bold' fill='white'%3E98%3C/text%3E%3C/svg%3E"
+    />
+    <title>Toy2Trail — 玩具越野记</title>
+  </head>
+  <body>
+    <canvas id="scene" aria-label="蓝色越野遥控车三维驾驶场景"></canvas>
+    <header>
+      <a class="brand" href="#">FIELD<span>NOTES</span><i>®</i></a
+      ><span class="edition">OPEN TERRAIN / 003</span
+      ><button id="help">操作指南 <span>?</span></button>
+    </header>
+    <aside id="minimap" aria-label="周边地形地图">
+      <button id="map-toggle" aria-controls="map-content" aria-expanded="true">周边地图 <span>−</span></button>
+      <div id="map-content">
+        <canvas id="minimap-canvas" role="img" aria-label="北向地图，蓝色箭头为车辆，绿色路线指向食物，装货后金色路线指向动物营地"></canvas>
+        <div class="map-legend"><span><i class="water"></i>水域</span><span><i class="rock"></i>岩石</span><small>240 × 240</small></div>
+      </div>
+      <section id="destination-card" aria-label="目的地任务">
+        <div class="destination-label"><span>小小探险</span><b id="destination-distance">出发吧</b></div>
+        <strong id="destination-title">山顶动物营地</strong>
+        <p id="destination-hint">沿金色路线，寻找山顶的小伙伴</p>
+        <div id="delivery-meta" hidden><span id="delivery-cargo"></span><small id="delivery-score"></small></div>
+        <div id="delivery-progress" hidden role="progressbar" aria-label="停靠装卸进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>
+        <button id="delivery-next" hidden>再接一单 →</button>
+        <div id="animal-collection" hidden aria-label="已收集的小动物"></div>
+        <button id="quest-replay" hidden>再玩一次 ↗</button>
+      </section>
+    </aside>
+    <section id="animal-reward" hidden aria-label="抵达奖励" aria-live="polite">
+      <div class="reward-eyebrow">抵达山顶 · 探险完成</div>
+      <h2>遇见新伙伴！</h2>
+      <p>一路翻山，换来三位小朋友。</p>
+      <div id="reward-animals"></div>
+      <small id="reward-saved"></small>
+      <button id="reward-close">收下啦，继续探索 →</button>
+    </section>
+    <main class="intro">
+      <div class="eyebrow"><b></b> REMOTE CONTROL · ALL TERRAIN</div>
+      <h1>BLUE<span>/</span>98</h1>
+      <p>小车身，大地形。</p>
+      <div class="specs">
+        <div><strong>4×4</strong><span>越野底盘</span></div>
+        <div><strong>∞</strong><span>无边界探索</span></div>
+        <div><strong>FREE</strong><span>自由驾驶</span></div>
+      </div>
+    </main>
+    <div id="toast" role="status">模型构建中</div>
+    <aside class="telemetry">
+      <div class="speed"><strong id="speed">00</strong><span>KM/H</span></div>
+      <div class="gear"><span>GEAR</span><b id="gear">N</b></div>
+      <div class="meter"><i id="power"></i></div>
+      <p id="surface">SAND / 砂土地形</p>
+    </aside>
+    <footer>
+      <div class="keys">
+        <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span>驾驶</span
+        ><kbd>SPACE</kbd><span>制动</span><kbd>R</kbd><span>复位</span>
+      </div>
+      <div class="height-control">
+        <label for="camera-height">视角高度</label>
+        <span>低</span><input id="camera-height" type="range" min="2" max="18" step="0.2" value="4" /><span>高</span>
+        <output id="height-value" for="camera-height">4.0</output>
+      </div>
+      <nav>
+        <button id="camera">视角 <b>跟随</b><span>C</span></button
+        ><button id="inspect">检视模型</button
+        ><button id="explode" hidden>分解结构 E</button
+        ><button id="reset">复位 ↻</button>
+      </nav>
+    </footer>
+    <div id="touch">
+      <button data-key="KeyW">▲</button>
+      <div>
+        <button data-key="KeyA">◀</button><button data-key="KeyS">▼</button
+        ><button data-key="KeyD">▶</button>
+      </div>
+      <button data-key="Space">刹车</button>
+    </div>
+    <dialog id="guide">
+      <button id="close-help">关闭 ×</button>
+      <h2>开出去，看看。</h2>
+      <p>
+        W / S 前进与倒车 · A / D 转向<br />空格 制动 · R 回到起点 · C 切换相机
+      </p>
+      <p>
+        右上角地图显示周围地形，N 为北，蓝色箭头表示车头。点击标题可收起地图。拖动底部「视角高度」调整高低；C 切换预设，R 恢复当前预设高度。检视模型时可自由环绕，滑杆暂时停用。
+      </p>
+      <p>
+        小小探险：抵达「山顶动物营地」，驶入金色圆圈即可解锁小兔、狐狸和熊猫。可自由绕路，距离为路线估算。R 只复位车辆，已收集的伙伴会保留；「重玩探险」重新开始动物收藏并回到起点。
+      </p>
+      <p>
+        动物补给：先跟随绿色路线找到随机食物点，驶入绿色圆圈并刹停约 1.6 秒，食物箱会装到车顶。坡道装卸时请按住空格或触屏刹车。品质随机为普通、优质、珍品。再沿金色路线送往动物营地，停稳约 1.8 秒自动卸货喂食，分别获得 10、20、35 颗爱心。点击「再接一单」随机生成新取货点，沿原路下山也能导航。R 和刷新保留货物及配送进度；「重玩探险」只重新开始动物收藏。
+      </p>
+      <p>
+        点击「检视模型」可拖动环绕观察，点击车身零件查看名称。检视中按 E
+        查看分解结构。
+      </p>
+      <p>
+        沿锥桶直行可达浅滩：涉水和泥地会增加阻力；中低岩石可慢速攀过，上石时自动切换爬行速度，大而陡的岩石仍会阻挡。上坡需持续给油，下坡松开刹车会滑行，车身会随悬挂轻微回弹。草坡可自由探索，R
+        可随时回到安全起点。没有围栏或驾驶范围限制，地形随行驶延伸；大岩石只在贴近车身时阻挡。切换窗口时自动停车。
+      </p>
+      <p>
+        采用运动学驾驶、简化岩石碰撞和悬挂，不模拟车损、翻车或浮力。速度和距离为虚拟单位，并非实物测量。
+      </p>
+    </dialog>
+    <div id="review-tools" hidden>
+      <button id="capture">保存阶段证据</button
+      ><button id="qa">运行驾驶测试</button
+      ><output id="capture-status"></output>
+    </div>
+    <div id="world-tools" hidden>
+      <button data-location="spawn">起点</button
+      ><button data-location="rocks">石径</button
+      ><button data-location="ford">浅滩</button
+      ><button data-location="mud">泥地</button
+      ><button data-location="ridge">山脊</button
+      ><button data-location="camp">动物营地</button
+      ><button data-location="food">当前取粮点</button
+      ><button data-location="overview">全景</button
+      ><button data-location="boundary">旧边界外</button
+      ><button data-location="distant">远行 / 4 km</button
+      ><button data-location="rebase">原点切换</button
+      ><button data-location="closepass">贴石通行</button
+      ><button data-location="climb">攀石测试</button
+      ><button id="capture-world">保存场景证据</button
+      ><output id="world-status"></output>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

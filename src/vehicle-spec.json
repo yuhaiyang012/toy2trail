@@ -1,0 +1,11 @@
+{
+  "wheelRadius": 0.87,
+  "wheelWidth": 0.87,
+  "wheelbase": 3.8,
+  "track": 3,
+  "roofHeight": 2.65,
+  "treadStations": 28,
+  "roofLampCount": 3,
+  "rearSpare": true,
+  "approximateGraphics": true
+}

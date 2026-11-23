@@ -1,0 +1,30 @@
+{
+  "name": "toy2trail",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5198",
+    "build": "tsc --noEmit && vite build && node scripts/standalone.mjs",
+    "check": "tsc --noEmit",
+    "test": "node scripts/physics.test.mjs && node scripts/offroad.test.mjs && node scripts/unbounded.test.mjs && node scripts/world.test.mjs && node scripts/navigation.test.mjs && node scripts/climbing.test.mjs && node scripts/ridge.test.mjs && node scripts/effects.test.mjs && node scripts/destination.test.mjs && node scripts/delivery.test.mjs && node scripts/realism.test.mjs",
+    "test:browser": "node scripts/browser.test.mjs"
+  },
+  "dependencies": {
+    "three": "0.180.0"
+  },
+  "devDependencies": {
+    "@types/three": "0.180.0",
+    "playwright-core": "1.56.1",
+    "typescript": "5.7.3",
+    "vite": "6.1.0"
+  },
+  "description": "Turn a real toy car into a playable Three.js off-road adventure.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yuhaiyang012/toy2trail.git"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

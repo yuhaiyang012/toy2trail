@@ -1,0 +1,24 @@
+node_modules/
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+
+# Keep the downloadable standalone game; rebuild the remaining output.
+/dist/*
+!/dist/blue-98.html
+
+# Local reference photos, reconstruction intermediates, and test output.
+/.img2threejs/
+/evidence/*
+!/evidence/.gitkeep
+!/evidence/renders/
+/evidence/renders/*
+!/evidence/renders/.gitkeep
+/object-sculpt-spec.json
+/assessment.json
+/spec-template.json
+/src/forgeFactory.ts
+/scripts/author-spec.mjs
+/docs/superpowers/
